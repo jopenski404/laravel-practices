@@ -60,4 +60,27 @@ public $successStatus = 200;
         $user = Auth::user(); 
         return response()->json(['success' => $user], $this-> successStatus); 
     } 
+    public function updateDetails(Request $request){
+       
+        $validator = Validator::make($request->all(), [ 
+            'name' => 'required', 
+            'email' => 'required|email', 
+            'age' => 'required|numeric',
+            'password' => 'required', 
+            'c_password' => 'required|same:password', 
+        ]);
+
+        if ($validator->fails()) { 
+            return response()->json(['error'=>$validator->errors()], 401);            
+    }
+
+        $input = $request->all(); 
+        unset($input['c_password']);
+        $input['password'] = bcrypt($input['password']); 
+
+        $updated = User::whereId($input['id'])
+                   ->update($input); 
+
+        return response()->json(['success' => $updated], $this-> successStatus); 
+    }
 }
