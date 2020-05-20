@@ -27,3 +27,4 @@ Route::post('details', 'API\UserController@details');
 
 // for Cities
 Route::post('list-cities','API\CitiesController@list');
+Route::post('get-city','API\CitiesController@getCity');

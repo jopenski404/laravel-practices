@@ -12,4 +12,8 @@ class CitiesController extends Controller
     public function list(){ 
         return response()->json(['success' => Cities::all()], $this-> successStatus); 
     }
+    public function getCity (Request $request){
+      //  $city = Cities::where('id',$city_id)->first();
+        return response()->json(['success' => Cities::whereId($request['id'])->first()], $this-> successStatus); 
+    }
 }
