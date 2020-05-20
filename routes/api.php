@@ -23,3 +23,7 @@ Route::post('register', 'API\UserController@register');
 Route::group(['middleware' => 'auth:api'], function(){
 Route::post('details', 'API\UserController@details');
 });
+
+
+// for Cities
+Route::post('list-cities','API\CitiesController@list');
