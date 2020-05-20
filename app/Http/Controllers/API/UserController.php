@@ -28,6 +28,9 @@ public $successStatus = 200;
      * 
      * @return \Illuminate\Http\Response 
      */ 
+
+    //Register user 
+    //parameters: name,email,age,password and c_password(for confirmatin of password)
     public function register(Request $request) 
     { 
         $validator = Validator::make($request->all(), [ 
@@ -60,6 +63,9 @@ public $successStatus = 200;
         $user = Auth::user(); 
         return response()->json(['success' => $user], $this-> successStatus); 
     } 
+
+    //Update user information
+    //parameters: id(for look up), name,email,age,password and c_password(for confirmatin of password)
     public function updateDetails(Request $request){
        
         $validator = Validator::make($request->all(), [ 
@@ -75,7 +81,7 @@ public $successStatus = 200;
     }
 
         $input = $request->all(); 
-        unset($input['c_password']);
+        unset($input['c_password']); 
         $input['password'] = bcrypt($input['password']); 
 
         $updated = User::whereId($input['id'])

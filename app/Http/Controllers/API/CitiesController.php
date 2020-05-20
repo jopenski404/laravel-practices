@@ -13,10 +13,16 @@ class CitiesController extends Controller
     public function list(){ 
         return response()->json(['success' => Cities::all()], $this-> successStatus); 
     }
+
+    //Get city 
+    //parameters: id
     public function getCity (Request $request){
       //  $city = Cities::where('id',$city_id)->first();
         return response()->json(['success' => Cities::whereId($request['id'])->first()], $this-> successStatus); 
     }
+
+    //Add new city 
+    //parameters: name
     public function addCity(Request $request){
         
         //use validator to set each fields for validaton
