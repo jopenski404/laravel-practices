@@ -2,9 +2,13 @@
 namespace App\Http\Controllers\API;
 use Illuminate\Http\Request; 
 use App\Http\Controllers\Controller; 
-use App\User; 
+
 use Illuminate\Support\Facades\Auth; 
 use Validator;
+use Illuminate\Support\Facades\Hash;
+use App\User; 
+use App\UserRoles;
+
 class UserController extends Controller 
 {
 public $successStatus = 200;
@@ -13,14 +17,21 @@ public $successStatus = 200;
      * 
      * @return \Illuminate\Http\Response 
      */ 
-    public function login(){ 
+    public function login(Request $request) { 
+
+        $data = $request->validate([
+            'email' => 'required',
+            'password' => 'required'
+        ]);
+
+        
         if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){ 
-            $user = Auth::user(); 
-            $success['token'] =  $user->createToken('MyApp')-> accessToken; 
-            return response()->json(['success' => $success], $this-> successStatus); 
+           
+              $user = Auth::user();
+              return   ['success' => true, 'data'=>$user];
         } 
         else{ 
-            return response()->json(['error'=>'Unauthorised'], 401); 
+            return ['success' => false, 'message'=>"Incorrect username or password"];
         } 
     }
 /** 
@@ -46,14 +57,14 @@ public $successStatus = 200;
             }
          
                 $input = $request->all(); 
-                $input['password'] = bcrypt($input['password']); 
+                $input['password'] = Hash::make($input['password']); 
                 $user = User::create($input); 
                 $success['token'] =  $user->createToken('MyApp')-> accessToken; 
                 $success['name'] =  $user->name;
                 $success['id'] = $user->id;
                 return response()->json(['success'=>$success], $this-> successStatus); 
     }
-/** 
+    /** 
      * details api 
      * 
      * @return \Illuminate\Http\Response 
@@ -74,6 +85,7 @@ public $successStatus = 200;
             'age' => 'required|numeric',
             'password' => 'required', 
             'c_password' => 'required|same:password', 
+            'role' => 'required'
         ]);
 
         if ($validator->fails()) { 
@@ -82,11 +94,17 @@ public $successStatus = 200;
 
         $input = $request->all(); 
         unset($input['c_password']); 
-        $input['password'] = bcrypt($input['password']); 
+        $input['password'] = Hash::make($input['password']); 
 
         $updated = User::whereId($input['id'])
                    ->update($input); 
 
         return response()->json(['success' => $updated], $this-> successStatus); 
     }
+
+    public function getAllUsers (Request $request){
+     
+        return response()->json(['data' => User::join('user_roles','users.role','=','user_roles.id')->get(['user_roles.name as role_desc','users.*'])->toArray()], $this-> successStatus); 
+      }
+  
 }
