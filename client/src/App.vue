@@ -18,8 +18,7 @@ export default {
   },
   mounted() {
     this.$root.$on('LOGGED_IN', data => {
-      this.user = data.user
-      this.token = data.token
+      this.user = data
     });
   }, 
   data() {

@@ -91,13 +91,11 @@ public $successStatus = 200;
             'name' => 'required', 
             'email' => 'required|email', 
             'age' => 'required|numeric',
-            'password' => 'required', 
-            'c_password' => 'required|same:password', 
             'role' => 'required'
         ]);
 
         if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json(['error'=>$validator], 401);            
     }
 
         $input = $request->all(); 
@@ -107,7 +105,7 @@ public $successStatus = 200;
         $updated = User::whereId($input['id'])
                    ->update($input); 
 
-        return response()->json(['success' => $updated], $this-> successStatus); 
+        return response()->json(['data' => $updated]); 
     }
 
     public function getAllUsers (Request $request){

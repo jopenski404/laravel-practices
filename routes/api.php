@@ -17,17 +17,19 @@ Auth::routes();
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::group(['middleware' => 'auth:sanctum'], function() {
 
+    Route::post('get-all-users', 'API\UserController@getAllUsers');
+    Route::post('register', 'API\UserController@register');
+    Route::post('details', 'API\UserController@details');
+    Route::post('get-all-roles', 'API\UserController@getAllRoles');
+    Route::post('update-details', 'API\UserController@updateDetails');
+});
 // For Users
 Route::post('login', 'API\UserController@login');
-Route::post('get-all-users', 'API\UserController@getAllUsers');
-Route::post('register', 'API\UserController@register');
-Route::group(['middleware' => 'auth:api'], function(){
-Route::post('details', 'API\UserController@details');
-});
-Route::post('get-all-roles', 'API\UserController@getAllRoles');
 
-Route::post('update-details', 'API\UserController@updateDetails');
+
+
 
 
 

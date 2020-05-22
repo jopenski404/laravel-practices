@@ -2,17 +2,28 @@
 <div>
      <b-modal ref="my-modal"  
               :title="'Update User #'+ userData.id " 
-              @show="resetModal"
-              @hidden="resetModal"
-              @ok="handleOk">
+               hide-footer>
       <div class="d-block">
       <form ref="form" @submit.stop.prevent="handleSubmit">
 
-        <b-form-group label-cols="4" label-cols-lg="2" label="Name" label-for="input-default">
+        <b-form-group label-cols="4" label-cols-lg="4" label="Name" label-for="input-default">
           <b-form-input id="input-default" v-model="userData.name"></b-form-input>
         </b-form-group>
-        <b-form-group label-cols="4" label-cols-lg="2" label="Email" label-for="input-default">
-          <b-form-input id="input-default" v-model="userData.email">></b-form-input>
+        <b-form-group label-cols="4" label-cols-lg="4" label="Email" label-for="input-default">
+          <b-form-input id="input-default" type="email"  v-model="userData.email"></b-form-input>
+        </b-form-group>
+        <b-form-group label-cols="4" label-cols-lg="4" label="Age" label-for="input-default">
+          <b-form-input id="input-default" type="number" v-model="userData.age"></b-form-input>
+        </b-form-group>
+        <b-form-group label-cols="4" label-cols-lg="4" label="Password" label-for="input-default">
+          <b-form-input id="input-default" type="password" v-model="password" :disabled="!editPassword"></b-form-input>
+          <b-form-checkbox v-model="editPassword">Change password</b-form-checkbox>
+        </b-form-group>
+        <b-form-group label-cols="4" label-cols-lg="4" label="Confirm Password" label-for="input-default" v-if="editPassword">
+          <b-form-input id="input-default" type="password" v-model="c_password" :disabled="!editPassword"></b-form-input>
+          <small id="passwordHelp" class="text-danger" v-if="password != c_password">
+            Input must be the same with password above
+          </small>
         </b-form-group>
         <b-form-group label="Role">
           <b-form-radio-group
@@ -22,9 +33,13 @@
             name="roles-radio">
             </b-form-radio-group>
         </b-form-group>
-      </form>
+        </form>
       </div>
-      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" @click="resetModal" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" @click="handleOk" :disabled="editPassword && password != c_password">Save changes</button>
+      </div>
+  
     </b-modal>
 </div> 
 </template>
@@ -53,6 +68,9 @@
                 email:null,
                 role:null
               },
+              password: 'password',
+              editPassword :false,
+              c_password : null,
               roles:null,
             };
         },
@@ -70,8 +88,36 @@
             handleOk(bvModalEvt) {
               // Prevent modal from closing
               bvModalEvt.preventDefault()
-              // Trigger submit handler
-              this.handleSubmit()
+
+              
+
+              let data = {
+                id : this.userData.id,
+                name : this.userData.name,
+                role : this.userData.role,
+                age  : this.userData.age,
+                password: this.password,
+                c_password: this.c_password
+              }
+              if(!this.editPassword){
+                delete data.password
+                delete data.c_password
+              }
+
+              axios.post("api/update-details",data)
+                .then(res => {
+                  if(res.status == 200){
+                    console.log('emit')
+                    axios.defaults.headers.common = {'Authorization': `Bearer ${res.data.token}`}
+                    this.$root.$emit('LOGGED_IN', res.data.user);
+                  }else{
+                    console.log('not')
+                    this.passError = res.data.message
+                    this.submitText = "Login"
+                  }  
+
+                });
+         
             },
         },
         watch: {
