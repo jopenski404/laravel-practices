@@ -114,5 +114,9 @@ public $successStatus = 200;
      
         return response()->json(['data' => User::join('user_roles','users.role','=','user_roles.id')->get(['user_roles.name as role_desc','users.*'])->toArray()], $this-> successStatus); 
       }
+    public function getAllRoles (Request $request){
+     
+        return response()->json(['data' => UserRoles::all()]); 
+      }
   
 }

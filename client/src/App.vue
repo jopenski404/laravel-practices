@@ -2,7 +2,7 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
     <LoginForm v-if="!user"></LoginForm>
-    <MainPage v-if="user || user != null " :user="user"></MainPage>
+    <MainPage v-if="user || user != null " :user-prop="user"></MainPage>
   </div>
 </template>
 

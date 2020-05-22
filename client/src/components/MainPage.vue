@@ -16,30 +16,29 @@
                         <td >{{row.email}}</td>
                         <td >{{row.role_desc}}</td>
                         <td>
-                            <button class="btn border" @click="updateUser(row.id)" :disabled=" user.id != row.id || !!updatePermission">Update</button>
+                            <button class="btn border" @click="updateUser(row.id)" :disabled="!!updatePermission">Update</button>
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <button class="btn bg-danger text-light" @click="deleteUser(row.id)" :disabled="!deletePermission">Delete</button>
                         </td>
                    </tr>
                 </tbody>
                 </table>
-
-                <b-modal ref="my-modal" hide-footer title="Using Component Methods">
-                    <div class="d-block text-center">
-                        <h3>Hello From My Modal!</h3>
-                    </div>
-                    <b-button class="mt-3" variant="outline-danger" block>Close Me</b-button>
-                    <b-button class="mt-2" variant="outline-warning" block>Toggle Me</b-button>
-                </b-modal>
+            
+              
             </div>
         </div>
+        <update-user-modal 
+            :dataProp="selectedUser" 
+            :userProp="user"
+            :showProp="updateVisibility"
+            :rolesProp="userRoles">
+        </update-user-modal>
     </div>
 </template>
 <script>
 
     import axios from 'axios';
-    
-
+    import UpdateUserModal from './modals/UserUpdateDialog.vue'
 
 
     axios.defaults.withCredentials = true;
@@ -48,14 +47,18 @@
     export default {  
         name: 'MainPage',
         components: {
-            
+        UpdateUserModal    
               
             },
         mounted() {
             console.log('Mainpage component mounted.')
             this.getAllUsers();
+            this.getAllRoles();
+            this.$root.$on('RESET_MODAL', data => {
+                this.updateVisibility =false
+            });
         },
-        props:['user'],
+        props:['userProp'],
         data() {
             return {
                 email:    'test@gmail.com',
@@ -71,11 +74,13 @@
                     ],
                 users: null,
                 selectedUser: null,
-                updateVisibility:false
+                updateVisibility:false,
+                user:this.userProp,
+                userRoles:null,
             };
         },
       methods: {
-          getAllUsers(){
+        getAllUsers(){
           
                 axios.post("api/get-all-users")
                     .then(res => {
@@ -84,12 +89,20 @@
                     });
 
           },
-          updateUser(id){
+        updateUser(id){
               let index = this.users.map(function(x) {return x.id; }).indexOf(id);
               this.selectedUser = this.users[index];
-              this.$refs['my-modal'].show();
+              this.updateVisibility =true;
+            
 
-          }
+          },
+        getAllRoles(){
+            axios.post("api/get-all-roles")
+                    .then(res => {
+                        console.log(res.data)
+                     this.userRoles = res.data.data
+                    });
+        }
         },
      computed:{
          deletePermission: function(){
