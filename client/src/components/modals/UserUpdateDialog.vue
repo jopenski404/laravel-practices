@@ -19,4 +19,51 @@
   </div>
 </div>
 </template>
+<script>
 
+    import axios from 'axios';
+
+
+
+
+    axios.defaults.withCredentials = true;
+    axios.defaults.baseURL = "http://localhost:8000";
+
+    export default {  
+        name: 'UserDialog',
+        mounted() {
+            console.log('Mainpage component mounted.')
+            this.getAllUsers();
+        },
+        props:['data'],
+        data() {
+            return {
+              userData:null
+            };
+        },
+      methods: {
+          getAllUsers(){
+          
+                axios.post("api/get-all-users", {
+                        email: this.email,
+                        password: this.password
+                    })
+                    .then(res => {
+                        console.log(res.data)
+                     this.users = res.data.data
+                    });
+
+          },
+          updateUser(id){
+              let index = this.users.map(function(x) {return x.id; }).indexOf(id);
+              this.selectedUser = this.users[index];
+              this.updateVisibility = true
+
+          }
+        },
+     computed:{
+         
+     }
+    
+    }
+</script>

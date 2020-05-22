@@ -2,7 +2,7 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
     <LoginForm v-if="!user"></LoginForm>
-    <MainPage v-if="user || user != null " user="user"></MainPage>
+    <MainPage v-if="user || user != null " :user="user.data"></MainPage>
   </div>
 </template>
 
@@ -11,7 +11,7 @@ import LoginForm from './components/LoginComponent.vue'
 import MainPage from './components/MainPage.vue'
 
 export default {
-  name: 'App',
+  name: 'Client',
   components: {
     LoginForm,
     MainPage

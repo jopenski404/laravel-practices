@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use App\User;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -37,4 +40,20 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+    public function login(Request $request) 
+    {
+        $credential = $request->only(['email', 'password']);
+ 
+        $user = User::where('email', $credential['email'])->first();
+ 
+        if (!$user || !Hash::check($credential['password'], $user->password)) {
+            return response()->json(['message' => 'invalid credentials'], 400);
+        }
+ 
+        return response()->json(
+            ['token' => $user->createToken($user->name)->plainTextToken],
+            200
+        );
+    }
+
 }

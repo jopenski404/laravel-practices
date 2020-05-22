@@ -51,10 +51,8 @@
         login(e) {
             e.preventDefault();
             this.submitText = "Logging in please wait."
-            axios.get("/sanctum/csrf-cookie").then(response => {
-            console.log(response);
-            axios
-            .post("api/login", {
+           
+            axios.post("api/login", {
                 email: this.email,
                 password: this.password
             })
@@ -67,7 +65,7 @@
                 this.submitText = "Login"
                }
                
-            });
+           
         });
         }
     }
