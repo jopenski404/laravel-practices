@@ -9,6 +9,7 @@
 <script>
 import LoginForm from './components/LoginComponent.vue'
 import MainPage from './components/MainPage.vue'
+import axios from 'axios';
 
 export default {
   name: 'Client',
@@ -18,7 +19,9 @@ export default {
   },
   mounted() {
     this.$root.$on('LOGGED_IN', data => {
-      this.user = data
+      this.user = data.user
+      this.token = data.token
+      axios.defaults.headers.common = {'Authorization': `Bearer ${this.token}`}
     });
   }, 
   data() {

@@ -58,11 +58,11 @@
             })
             .then(res => {
                if(res.status == 200){
-                console.log('emit')
+                console.log(res)
                 axios.defaults.headers.common = {'Authorization': `Bearer ${res.data.token}`}
               /*   axios.defaults.headers.common = {'Accept': 'application/json'}
                 axios.defaults.headers.common = {'Content-Type': 'application/json'} */
-                this.$root.$emit('LOGGED_IN', res.data.user);
+                this.$root.$emit('LOGGED_IN', res.data);
                }else{
                 console.log('not')
                 this.passError = res.data.message
