@@ -57,16 +57,16 @@
                 password: this.password
             })
             .then(res => {
-               if(res.data.success){
+               if(res.status == 200){
+                console.log('emit')
                 this.$root.$emit('LOGGED_IN', res.data);
                }else{
+                console.log('not')
                 this.passError = res.data.message
-                console.log(res.data.message)
                 this.submitText = "Login"
-               }
-               
-           
-        });
+               }  
+
+            });
         }
     }
     }

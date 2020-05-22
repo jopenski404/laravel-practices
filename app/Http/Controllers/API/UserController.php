@@ -19,20 +19,18 @@ public $successStatus = 200;
      */ 
     public function login(Request $request) { 
 
-        $data = $request->validate([
-            'email' => 'required',
-            'password' => 'required'
-        ]);
-
-        
-        if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){ 
-           
-              $user = Auth::user();
-              return   ['success' => true, 'data'=>$user];
-        } 
-        else{ 
-            return ['success' => false, 'message'=>"Incorrect username or password"];
-        } 
+        $credential = $request->only(['email', 'password']);
+ 
+        $user = User::where('email', $credential['email'])->first();
+ 
+        if (!$user || !Hash::check($credential['password'], $user->password)) {
+            return response()->json(['message' => 'invalid credentials'], 400);
+        }
+ 
+        return response()->json(
+            ['token' => $user->createToken($user->name)->plainTextToken, 'user'=> $user],
+            200
+        );
     }
 /** 
      * Register api 
@@ -45,12 +43,22 @@ public $successStatus = 200;
     public function register(Request $request) 
     { 
         $validator = Validator::make($request->all(), [ 
-            'name' => 'required', 
-            'email' => 'required|email', 
-            'age' => 'required|numeric',
-            'password' => 'required', 
-            'c_password' => 'required|same:password', 
-        ]);
+            'firstname' => ['required', 'alpha', 'max:50'],
+            'lastname' => ['required', 'alpha', 'max:50'],
+            'email' => ['required', 'string', 'email', 'unique:users', 'max:50'],
+            'password' => [
+                'required',
+                'string',
+                'min:8', // must be at least 10 characters in length
+                'regex:/[a-z]/', // must contain at least one lowercase letter
+                'regex:/[A-Z]/', // must contain at least one uppercase letter
+                'regex:/[0-9]/', // must contain at least one digit
+                'regex:/[\W]/', // must contain a special character],
+                'confirmed',
+            ],
+        ], ['password.regex' => ':attribute must contain lower and upper case letter, number and special character ']);
+
+ 
 
         if ($validator->fails()) { 
                     return response()->json(['error'=>$validator->errors()], 401);            

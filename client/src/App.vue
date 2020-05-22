@@ -2,7 +2,7 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
     <LoginForm v-if="!user"></LoginForm>
-    <MainPage v-if="user || user != null " :user="user.data"></MainPage>
+    <MainPage v-if="user || user != null " :user="user"></MainPage>
   </div>
 </template>
 
@@ -18,14 +18,16 @@ export default {
   },
   mounted() {
     this.$root.$on('LOGGED_IN', data => {
-        this.user = data
+      this.user = data.user
+      this.token = data.token
     });
   }, 
   data() {
-          return {
-                 user:null,
-                };
-           },
+    return {
+      user:null,
+      token:null,
+            };
+        },
     }
 </script>
 

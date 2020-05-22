@@ -16,7 +16,7 @@
                         <td >{{row.email}}</td>
                         <td >{{row.role_desc}}</td>
                         <td>
-                            <button class="btn border" @click="updateUser(row.id)" :disabled="!updatePermission && user.id != row.id">Update</button>
+                            <button class="btn border" @click="updateUser(row.id)" :disabled=" user.id != row.id || !!updatePermission">Update</button>
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <button class="btn bg-danger text-light" @click="deleteUser(row.id)" :disabled="!deletePermission">Delete</button>
                         </td>
@@ -77,10 +77,7 @@
       methods: {
           getAllUsers(){
           
-                axios.post("api/get-all-users", {
-                        email: this.email,
-                        password: this.password
-                    })
+                axios.post("api/get-all-users")
                     .then(res => {
                         console.log(res.data)
                      this.users = res.data.data

@@ -51,7 +51,7 @@ class LoginController extends Controller
         }
  
         return response()->json(
-            ['token' => $user->createToken($user->name)->plainTextToken],
+            ['token' => $user->createToken($user->name)->plainTextToken, 'user'=> $user],
             200
         );
     }
